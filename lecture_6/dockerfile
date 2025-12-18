@@ -1,0 +1,24 @@
+FROM python:3.14-slim
+#creates app in the container
+WORKDIR /app
+
+# ./ means it copies r.txt into this working directory
+COPY requirements.txt ./
+# -r - read [list of packages]
+# --no-cache-dir doesn't save the download cache
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+EXPOSE 8080
+
+#creates new user named app inside the container
+#so that app isn't run as root
+RUN useradd -m appuser
+#switches to the user
+USER appuser
+
+#the command that is executed when the container starts
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
+
+
+
